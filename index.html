@@ -19,18 +19,11 @@
             if (matches) {
                 return matches.map(match => {
                     const details = match.replace(/[{}]/g, '');
-                    let status = '';
-                    // Only look for status/date after the + symbol if it exists
-                    if (details.includes('+')) {
-                        status = details.split('+')[1];
-                    }
-                    
                     return {
                         hash: details.match(/\((.*?)\)/)[1],
                         amount: details.includes('$200000000') ? '$200000000' : 'N/A',
                         routing: details.match(/\((\d+)\)/)[1],
-                        account: details.match(/\((\d{10})\)/)[1],
-                        status: status  // Will be empty string if no status found
+                        account: details.match(/\((\d{10})\)/)[1]
                     };
                 });
             }
@@ -53,8 +46,7 @@
                         Hash: ${status.hash.substring(0,8)}...<br>
                         Amount: ${status.amount}<br>
                         Routing: ${status.routing}<br>
-                        Account: ${status.account}<br>
-                        ${status.status ? 'Status: ' + status.status : ''}
+                        Account: ${status.account}
                         </p><hr>`;
                 });
             } catch (error) {
