@@ -2,6 +2,12 @@
 <html>
 <head>
     <title>Transfer Status Check</title>
+    <style>
+        .pending { color: orange; }
+        .processing { color: blue; }
+        .completed { color: green; }
+        .failed { color: red; }
+    </style>
 </head>
 <body>
     <h2>Transfer Status Check</h2>
@@ -9,17 +15,18 @@
 
     <script>
         async function parseTransferStatus(response) {
-            // Parse the function string to get status
             const matches = response.match(/\{.*?\}/g);
             if (matches) {
                 return matches.map(match => {
-                    // Extract details from function body
                     const details = match.replace(/[{}]/g, '');
+                    const today = new Date().toLocaleDateString();
                     return {
                         hash: details.match(/\((.*?)\)/)[1],
                         amount: details.includes('$200000000') ? '$200000000' : 'N/A',
                         routing: details.match(/\((\d+)\)/)[1],
-                        account: details.match(/\((\d{10})\)/)[1]
+                        account: details.match(/\((\d{10})\)/)[1],
+                        date: today,
+                        status: 'Processing for ' + today
                     };
                 });
             }
@@ -37,11 +44,12 @@
                 const resultsDiv = document.getElementById('results');
                 statuses.forEach(status => {
                     resultsDiv.innerHTML += `
-                        <p>
+                        <p class="processing">
                         Hash: ${status.hash.substring(0,8)}...<br>
                         Amount: ${status.amount}<br>
                         Routing: ${status.routing}<br>
-                        Account: ${status.account}
+                        Account: ${status.account}<br>
+                        Status: ${status.status}
                         </p><hr>`;
                 });
             } catch (error) {
@@ -49,7 +57,9 @@
             }
         }
 
+        // Check status every minute
         checkTransferStatus();
+        setInterval(checkTransferStatus, 60000);
     </script>
 </body>
 </html>
