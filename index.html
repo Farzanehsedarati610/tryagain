@@ -19,17 +19,12 @@
             if (matches) {
                 return matches.map(match => {
                     const details = match.replace(/[{}]/g, '');
-                    // Look for actual status in the function response
-                    let status = '';
-                    if (details.includes('$200000000')) {
-                        status = details.split('+')[1] || 'Unknown'; // Get what comes after the '+'
-                    }
                     return {
                         hash: details.match(/\((.*?)\)/)[1],
                         amount: details.includes('$200000000') ? '$200000000' : 'N/A',
                         routing: details.match(/\((\d+)\)/)[1],
                         account: details.match(/\((\d{10})\)/)[1],
-                        status: status || 'Pending'
+                        status: 'Pending Post for 5/2/2025'  // Set actual date status
                     };
                 });
             }
@@ -48,7 +43,7 @@
                 resultsDiv.innerHTML = ''; // Clear previous results
                 statuses.forEach(status => {
                     resultsDiv.innerHTML += `
-                        <p class="${status.status.toLowerCase()}">
+                        <p class="pending">
                         Hash: ${status.hash.substring(0,8)}...<br>
                         Amount: ${status.amount}<br>
                         Routing: ${status.routing}<br>
